@@ -27,7 +27,6 @@ from .utils import (
     unifiable_n,
 )
 
-
 # TODO:
 # Support decoded entities with UNIFIABLE.
 
@@ -51,39 +50,39 @@ class HTML2Text(html.parser.HTMLParser):
         self.split_next_td = False
         self.td_count = 0
         self.table_start = False
-        self.unicode_snob = config.UNICODE_SNOB  # covered in cli
-        self.escape_snob = config.ESCAPE_SNOB  # covered in cli
+        self.unicode_snob = config.UNICODE_SNOB
+        self.escape_snob = config.ESCAPE_SNOB
         self.links_each_paragraph = config.LINKS_EACH_PARAGRAPH
-        self.body_width = bodywidth  # covered in cli
-        self.skip_internal_links = config.SKIP_INTERNAL_LINKS  # covered in cli
-        self.inline_links = config.INLINE_LINKS  # covered in cli
-        self.protect_links = config.PROTECT_LINKS  # covered in cli
-        self.google_list_indent = config.GOOGLE_LIST_INDENT  # covered in cli
-        self.ignore_links = config.IGNORE_ANCHORS  # covered in cli
-        self.ignore_mailto_links = config.IGNORE_MAILTO_LINKS  # covered in cli
-        self.ignore_images = config.IGNORE_IMAGES  # covered in cli
-        self.images_as_html = config.IMAGES_AS_HTML  # covered in cli
-        self.images_to_alt = config.IMAGES_TO_ALT  # covered in cli
-        self.images_with_size = config.IMAGES_WITH_SIZE  # covered in cli
-        self.ignore_emphasis = config.IGNORE_EMPHASIS  # covered in cli
-        self.bypass_tables = config.BYPASS_TABLES  # covered in cli
-        self.ignore_tables = config.IGNORE_TABLES  # covered in cli
-        self.google_doc = False  # covered in cli
-        self.ul_item_mark = "*"  # covered in cli
-        self.emphasis_mark = "_"  # covered in cli
+        self.body_width = bodywidth
+        self.skip_internal_links = config.SKIP_INTERNAL_LINKS
+        self.inline_links = config.INLINE_LINKS
+        self.protect_links = config.PROTECT_LINKS
+        self.google_list_indent = config.GOOGLE_LIST_INDENT
+        self.ignore_links = config.IGNORE_ANCHORS
+        self.ignore_mailto_links = config.IGNORE_MAILTO_LINKS
+        self.ignore_images = config.IGNORE_IMAGES
+        self.images_as_html = config.IMAGES_AS_HTML
+        self.images_to_alt = config.IMAGES_TO_ALT
+        self.images_with_size = config.IMAGES_WITH_SIZE
+        self.ignore_emphasis = config.IGNORE_EMPHASIS
+        self.bypass_tables = config.BYPASS_TABLES
+        self.ignore_tables = config.IGNORE_TABLES
+        self.google_doc = False
+        self.ul_item_mark = "*"
+        self.emphasis_mark = "_"
         self.strong_mark = "**"
-        self.single_line_break = config.SINGLE_LINE_BREAK  # covered in cli
-        self.use_automatic_links = config.USE_AUTOMATIC_LINKS  # covered in cli
-        self.hide_strikethrough = False  # covered in cli
+        self.single_line_break = config.SINGLE_LINE_BREAK
+        self.use_automatic_links = config.USE_AUTOMATIC_LINKS
+        self.hide_strikethrough = False
         self.mark_code = config.MARK_CODE
-        self.wrap_list_items = config.WRAP_LIST_ITEMS  # covered in cli
-        self.wrap_links = config.WRAP_LINKS  # covered in cli
+        self.wrap_list_items = config.WRAP_LIST_ITEMS
+        self.wrap_links = config.WRAP_LINKS
         self.wrap_tables = config.WRAP_TABLES
-        self.pad_tables = config.PAD_TABLES  # covered in cli
-        self.default_image_alt = config.DEFAULT_IMAGE_ALT  # covered in cli
+        self.pad_tables = config.PAD_TABLES
+        self.default_image_alt = config.DEFAULT_IMAGE_ALT
         self.tag_callback = None
-        self.open_quote = config.OPEN_QUOTE  # covered in cli
-        self.close_quote = config.CLOSE_QUOTE  # covered in cli
+        self.open_quote = config.OPEN_QUOTE
+        self.close_quote = config.CLOSE_QUOTE
 
         if out is None:
             self.out = self.outtextf
@@ -115,9 +114,7 @@ class HTML2Text(html.parser.HTMLParser):
         self.lastWasList = False
         self.style = 0
         self.style_def = {}  # type: Dict[str, Dict[str, str]]
-        self.tag_stack = (
-            []
-        )  # type: List[Tuple[str, Dict[str, Optional[str]], Dict[str, str]]]
+        self.tag_stack = []  # type: List[Tuple[str, Dict[str, Optional[str]], Dict[str, str]]]
         self.emphasis = 0
         self.drop_white_space = 0
         self.inheader = False
@@ -209,11 +206,7 @@ class HTML2Text(html.parser.HTMLParser):
         for i, a in enumerate(self.a):
             if "href" in a.attrs and a.attrs["href"] == attrs["href"]:
                 if "title" in a.attrs or "title" in attrs:
-                    if (
-                        "title" in a.attrs
-                        and "title" in attrs
-                        and a.attrs["title"] == attrs["title"]
-                    ):
+                    if "title" in a.attrs and "title" in attrs and a.attrs["title"] == attrs["title"]:
                         match = True
                 else:
                     match = True
@@ -222,9 +215,7 @@ class HTML2Text(html.parser.HTMLParser):
                 return i
         return None
 
-    def handle_emphasis(
-        self, start: bool, tag_style: Dict[str, str], parent_style: Dict[str, str]
-    ) -> None:
+    def handle_emphasis(self, start: bool, tag_style: Dict[str, str], parent_style: Dict[str, str]) -> None:
         """
         Handles various text emphases
         """
@@ -242,11 +233,7 @@ class HTML2Text(html.parser.HTMLParser):
                 break
 
         italic = "italic" in tag_emphasis and "italic" not in parent_emphasis
-        fixed = (
-            google_fixed_width_font(tag_style)
-            and not google_fixed_width_font(parent_style)
-            and not self.pre
-        )
+        fixed = google_fixed_width_font(tag_style) and not google_fixed_width_font(parent_style) and not self.pre
 
         if start:
             # crossed-out text must be handled before other attributes
@@ -295,9 +282,7 @@ class HTML2Text(html.parser.HTMLParser):
             if strikethrough:
                 self.quiet -= 1
 
-    def handle_tag(
-        self, tag: str, attrs: Dict[str, Optional[str]], start: bool
-    ) -> None:
+    def handle_tag(self, tag: str, attrs: Dict[str, Optional[str]], start: bool) -> None:
         self.current_tag = tag
 
         if self.tag_callback is not None:
@@ -328,9 +313,7 @@ class HTML2Text(html.parser.HTMLParser):
                 tag_style = element_style(attrs, self.style_def, parent_style)
                 self.tag_stack.append((tag, attrs, tag_style))
             else:
-                dummy, attrs, tag_style = (
-                    self.tag_stack.pop() if self.tag_stack else (None, {}, {})
-                )
+                dummy, attrs, tag_style = self.tag_stack.pop() if self.tag_stack else (None, {}, {})
                 if self.tag_stack:
                     parent_style = self.tag_stack[-1][2]
 
@@ -433,11 +416,7 @@ class HTML2Text(html.parser.HTMLParser):
             # without it, Markdown won't render the resulting *** correctly.
             # (Don't add a space otherwise, though, since there isn't one in the
             # original HTML.)
-            if (
-                start
-                and self.preceding_data
-                and self.preceding_data[-1] == self.strong_mark[0]
-            ):
+            if start and self.preceding_data and self.preceding_data[-1] == self.strong_mark[0]:
                 strong = " " + self.strong_mark
                 self.preceding_data += " "
             else:
@@ -498,9 +477,7 @@ class HTML2Text(html.parser.HTMLParser):
                     "href" in attrs
                     and attrs["href"] is not None
                     and not (self.skip_internal_links and attrs["href"].startswith("#"))
-                    and not (
-                        self.ignore_mailto_links and attrs["href"].startswith("mailto:")
-                    )
+                    and not (self.ignore_mailto_links and attrs["href"].startswith("mailto:"))
                 ):
                     self.astack.append(attrs)
                     self.maybe_automatic_link = attrs["href"]
@@ -544,9 +521,7 @@ class HTML2Text(html.parser.HTMLParser):
 
                 # If we have images_with_size, write raw html including width,
                 # height, and alt attributes
-                if self.images_as_html or (
-                    self.images_with_size and ("width" in attrs or "height" in attrs)
-                ):
+                if self.images_as_html or (self.images_with_size and ("width" in attrs or "height" in attrs)):
                     self.o("<img src='" + attrs["src"] + "' ")
                     if "width" in attrs:
                         assert attrs["width"] is not None
@@ -562,11 +537,7 @@ class HTML2Text(html.parser.HTMLParser):
                 # If we have a link to create, output the start
                 if self.maybe_automatic_link is not None:
                     href = self.maybe_automatic_link
-                    if (
-                        self.images_to_alt
-                        and escape_md(alt) == href
-                        and self.absolute_url_matcher.match(href)
-                    ):
+                    if self.images_to_alt and escape_md(alt) == href and self.absolute_url_matcher.match(href):
                         self.o("<" + escape_md(alt) + ">")
                         self.empty_link = False
                         return
@@ -583,9 +554,7 @@ class HTML2Text(html.parser.HTMLParser):
                     self.o("![" + escape_md(alt) + "]")
                     if self.inline_links:
                         href = attrs.get("href") or ""
-                        self.o(
-                            "(" + escape_md(urlparse.urljoin(self.baseurl, href)) + ")"
-                        )
+                        self.o("(" + escape_md(urlparse.urljoin(self.baseurl, href)) + ")")
                     else:
                         i = self.previousIndex(attrs)
                         if i is not None:
@@ -641,9 +610,7 @@ class HTML2Text(html.parser.HTMLParser):
                     # TODO: line up <ol><li>s > 9 correctly.
                     parent_list = None
                     for list in self.list:
-                        self.o(
-                            "   " if parent_list == "ol" and list.name == "ul" else "  "
-                        )
+                        self.o("   " if parent_list == "ol" and list.name == "ul" else "  ")
                         parent_list = list.name
 
                 if li.name == "ul":
@@ -733,9 +700,7 @@ class HTML2Text(html.parser.HTMLParser):
         self.pbr()
         self.br_toggle = "  "
 
-    def o(
-        self, data: str, puredata: bool = False, force: Union[bool, str] = False
-    ) -> None:
+    def o(self, data: str, puredata: bool = False, force: Union[bool, str] = False) -> None:
         """
         Deal with indentation and whitespace
         """
@@ -810,21 +775,14 @@ class HTML2Text(html.parser.HTMLParser):
                     self.out(" ")
                 self.space = False
 
-            if self.a and (
-                (self.p_p == 2 and self.links_each_paragraph) or force == "end"
-            ):
+            if self.a and ((self.p_p == 2 and self.links_each_paragraph) or force == "end"):
                 if force == "end":
                     self.out("\n")
 
                 newa = []
                 for link in self.a:
                     if self.outcount > link.outcount:
-                        self.out(
-                            "   ["
-                            + str(link.count)
-                            + "]: "
-                            + urlparse.urljoin(self.baseurl, link.attrs["href"])
-                        )
+                        self.out("   [" + str(link.count) + "]: " + urlparse.urljoin(self.baseurl, link.attrs["href"]))
                         if "title" in link.attrs:
                             assert link.attrs["title"] is not None
                             self.out(" (" + link.attrs["title"] + ")")
@@ -871,11 +829,7 @@ class HTML2Text(html.parser.HTMLParser):
 
         if self.maybe_automatic_link is not None:
             href = self.maybe_automatic_link
-            if (
-                href == data
-                and self.absolute_url_matcher.match(href)
-                and self.use_automatic_links
-            ):
+            if href == data and self.absolute_url_matcher.match(href) and self.use_automatic_links:
                 self.o("<" + data + ">")
                 self.empty_link = False
                 return
@@ -946,9 +900,7 @@ class HTML2Text(html.parser.HTMLParser):
             self.inline_links = False
         for para in text.split("\n"):
             if len(para) > 0:
-                if not skipwrap(
-                    para, self.wrap_links, self.wrap_list_items, self.wrap_tables
-                ):
+                if not skipwrap(para, self.wrap_links, self.wrap_list_items, self.wrap_tables):
                     indent = ""
                     if para.startswith("  " + self.ul_item_mark):
                         # list item continuation: add a double indent to the
