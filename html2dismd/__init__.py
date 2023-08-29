@@ -66,7 +66,7 @@ class HTML2DisMd(html.parser.HTMLParser):
         self.ignore_emphasis = config.IGNORE_EMPHASIS
         self.bypass_tables = config.BYPASS_TABLES
         self.ignore_tables = config.IGNORE_TABLES
-        self.google_doc = False
+        self.google_doc = True
         self.ul_item_mark = "*"
         self.emphasis_mark = "_"
         self.strong_mark = "**"

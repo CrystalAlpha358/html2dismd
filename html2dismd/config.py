@@ -1,19 +1,19 @@
 import re
 
 # Use Unicode characters instead of their ascii pseudo-replacements
-UNICODE_SNOB = False
+UNICODE_SNOB = True
 
 # Marker to use for marking tables for padding post processing
 TABLE_MARKER_FOR_PAD = "special_marker_for_table_padding"
 # Escape all special characters.  Output is less readable, but avoids
 # corner case formatting issues.
-ESCAPE_SNOB = False
+ESCAPE_SNOB = True
 
 # Put the links after each paragraph instead of at the end.
 LINKS_EACH_PARAGRAPH = False
 
 # Wrap long lines at position. 0 for no wrapping.
-BODY_WIDTH = 78
+BODY_WIDTH = 0
 
 # Don't show internal links (href="#local-anchor") -- corresponding link
 # targets won't be visible in the plain text file anyway.
@@ -35,7 +35,7 @@ WRAP_LIST_ITEMS = False
 WRAP_TABLES = False
 
 # Number of pixels Google indents nested lists
-GOOGLE_LIST_INDENT = 36
+GOOGLE_LIST_INDENT = 0
 
 # Values Google and others may use to indicate bold text
 BOLD_TEXT_STYLE_VALUES = ("bold", "700", "800", "900")
@@ -62,7 +62,7 @@ RE_SPACE = re.compile(r"\s\+")
 RE_ORDERED_LIST_MATCHER = re.compile(r"\d+\.\s")
 RE_UNORDERED_LIST_MATCHER = re.compile(r"[-\*\+]\s")
 RE_MD_CHARS_MATCHER = re.compile(r"([\\\[\]\(\)])")
-RE_MD_CHARS_MATCHER_ALL = re.compile(r"([`\*_{}\[\]\(\)#!])")
+RE_MD_CHARS_MATCHER_ALL = re.compile(r"([`\*_{}\[\]\(\)#!<>|:~])")
 
 # to find links in the text
 RE_LINK = re.compile(r"(\[.*?\] ?\(.*?\))|(\[.*?\]:.*?)")
