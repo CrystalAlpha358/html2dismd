@@ -27,8 +27,6 @@ from .utils import (
     unifiable_n,
 )
 
-__version__ = (2020, 1, 16)
-
 
 # TODO:
 # Support decoded entities with UNIFIABLE.
