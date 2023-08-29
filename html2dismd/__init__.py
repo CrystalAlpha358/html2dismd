@@ -283,6 +283,7 @@ class HTML2DisMd(html.parser.HTMLParser):
 
     def handle_tag(self, tag: str, attrs: dict[str, str | None], start: bool) -> None:
         self.current_tag = tag
+        tag_style, parent_style = dict[str, str](), dict[str, str]()
 
         if self.tag_callback is not None:
             if self.tag_callback(self, tag, attrs, start) is True:
@@ -305,7 +306,6 @@ class HTML2DisMd(html.parser.HTMLParser):
             # need the attributes of the parent nodes in order to get a
             # complete style description for the current element. we assume
             # that google docs export well formed html.
-            parent_style = dict[str, str]()
             if start:
                 if self.tag_stack:
                     parent_style = self.tag_stack[-1][2]
