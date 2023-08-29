@@ -1,4 +1,4 @@
-"""html2text: Turn HTML into equivalent Markdown-structured text."""
+"""html2dismd: Turn HTML into equivalent Discord's Markdown-structured text."""
 
 import html.entities
 import html.parser
@@ -30,7 +30,7 @@ from .utils import (
 # Support decoded entities with UNIFIABLE.
 
 
-class HTML2Text(html.parser.HTMLParser):
+class HTML2DisMd(html.parser.HTMLParser):
     def __init__(
         self,
         out: OutCallback | None = None,
@@ -465,7 +465,7 @@ class HTML2Text(html.parser.HTMLParser):
                 self.o(self.close_quote)
             self.quote = not self.quote
 
-        def link_url(self: HTML2Text, link: str, title: str = "") -> None:
+        def link_url(self: HTML2DisMd, link: str, title: str = "") -> None:
             url = urlparse.urljoin(self.baseurl, link)
             title = ' "{}"'.format(title) if title.strip() else ""
             self.o("]({url}{title})".format(url=escape_md(url), title=title))
@@ -940,9 +940,9 @@ class HTML2Text(html.parser.HTMLParser):
         return result
 
 
-def html2text(html: str, baseurl: str = "", bodywidth: int | None = None) -> str:
+def html2dismd(html: str, baseurl: str = "", bodywidth: int | None = None) -> str:
     if bodywidth is None:
         bodywidth = config.BODY_WIDTH
-    h = HTML2Text(baseurl=baseurl, bodywidth=bodywidth)
+    h = HTML2DisMd(baseurl=baseurl, bodywidth=bodywidth)
 
     return h.handle(html)
