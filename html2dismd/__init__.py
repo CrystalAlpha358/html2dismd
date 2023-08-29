@@ -938,11 +938,3 @@ class HTML2DisMd(html.parser.HTMLParser):
                     result += "\n"
                     newlines += 1
         return result
-
-
-def html2dismd(html: str, baseurl: str = "", bodywidth: int | None = None) -> str:
-    if bodywidth is None:
-        bodywidth = config.BODY_WIDTH
-    h = HTML2DisMd(baseurl=baseurl, bodywidth=bodywidth)
-
-    return h.handle(html)
