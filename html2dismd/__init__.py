@@ -5,6 +5,7 @@ import html.parser
 import re
 import urllib.parse as urlparse
 from textwrap import wrap
+from typing import Final
 
 from . import config
 from .elements import AnchorElement, ListElement
@@ -24,6 +25,8 @@ from .utils import (
     skipwrap,
     unifiable_n,
 )
+
+_STRIP_STR: Final = " \t\r\n"
 
 # TODO:
 # Support decoded entities with UNIFIABLE.
@@ -161,7 +164,7 @@ class HTML2DisMd(html.parser.HTMLParser):
             nbsp = html.entities.html5["nbsp;"]
         else:
             nbsp = " "
-        outtext = outtext.replace("&nbsp_place_holder;", nbsp)
+        outtext = outtext.replace("&nbsp_place_holder;", nbsp).strip(_STRIP_STR)
 
         # Clear self.outtextlist to avoid memory leak of its content to
         # the next handling.
