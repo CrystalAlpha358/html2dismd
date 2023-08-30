@@ -566,8 +566,7 @@ class HTML2DisMd(html.parser.HTMLParser):
                     self.o(f"{'' if self.images_to_anchor else '!'}[{escape_md(alt)}]")
 
                     if self.inline_links:
-                        url_md = escape_md(url)
-                        self.o(f"(<{url_md}>)" if self.protect_links else f"({url_md})")
+                        self.o(f"({escape_md(url)})")
                     else:
                         i = self.previousIndex(attrs)
                         if i is not None:
