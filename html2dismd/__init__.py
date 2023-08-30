@@ -3,7 +3,6 @@
 import html.entities
 import html.parser
 import re
-import string
 import urllib.parse as urlparse
 from textwrap import wrap
 
@@ -70,6 +69,7 @@ class HTML2DisMd(html.parser.HTMLParser):
         self.ul_item_mark = "*"
         self.emphasis_mark = "_"
         self.strong_mark = "**"
+        self.whitespace_after = "_*"
         self.single_line_break = config.SINGLE_LINE_BREAK
         self.use_automatic_links = config.USE_AUTOMATIC_LINKS
         self.hide_strikethrough = False
@@ -95,7 +95,6 @@ class HTML2DisMd(html.parser.HTMLParser):
         self.p_p = 0  # number of newline character to print before next output
         self.outcount = 0
         self.start = True
-        self.space = False
         self.a = list[AnchorElement]()
         self.astack = list[dict[str, str | None] | None]()
         self.maybe_automatic_link: str | None = None
@@ -255,7 +254,6 @@ class HTML2DisMd(html.parser.HTMLParser):
             if bold or italic or fixed:
                 # there must not be whitespace before closing emphasis mark
                 self.emphasis -= 1
-                self.space = False
             if fixed:
                 if self.drop_white_space:
                     # empty emphasis, drop it
@@ -324,7 +322,6 @@ class HTML2DisMd(html.parser.HTMLParser):
                     # are inside link name, so only add '#' if it can appear before '['
                     if self.outtextlist and self.outtextlist[-1] == "[":
                         self.outtextlist.pop()
-                        self.space = False
                         self.o(hn(tag) * "#" + " ")
                         self.o("[")
                 else:
@@ -353,11 +350,11 @@ class HTML2DisMd(html.parser.HTMLParser):
 
         if tag == "br" and start:
             if self.astack:
-                self.space = True
+                pass
             elif self.blockquote > 0:
-                self.o("  \n> ")
+                self.o("\n> ")
             else:
-                self.o("  \n")
+                self.o("\n")
 
         if tag == "hr" and start:
             self.p()
@@ -395,12 +392,7 @@ class HTML2DisMd(html.parser.HTMLParser):
             # marks, and we'll be left with eg 'foo_bar_' visible.
             # (Don't add a space otherwise, though, since there isn't one in the
             # original HTML.)
-            if (
-                start
-                and self.preceding_data
-                and self.preceding_data[-1] not in string.whitespace
-                and self.preceding_data[-1] not in string.punctuation
-            ):
+            if start and self.preceding_data and self.preceding_data[-1] in self.whitespace_after:
                 emphasis = " " + self.emphasis_mark
                 self.preceding_data += " "
             else:
@@ -649,13 +641,13 @@ class HTML2DisMd(html.parser.HTMLParser):
                         self.table_start = True
                         if self.pad_tables:
                             self.o("<" + config.TABLE_MARKER_FOR_PAD + ">")
-                            self.o("  \n")
+                            self.o("\n")
                     else:
                         if self.pad_tables:
                             # add break in case the table is empty or its 1 row table
                             self.soft_br()
                             self.o("</" + config.TABLE_MARKER_FOR_PAD + ">")
-                            self.o("  \n")
+                            self.o("\n")
                 if tag in ["td", "th"] and start:
                     if self.split_next_td:
                         self.o("| ")
@@ -697,7 +689,7 @@ class HTML2DisMd(html.parser.HTMLParser):
     def soft_br(self) -> None:
         "Soft breaks"
         self.pbr()
-        self.br_toggle = "  "
+        self.br_toggle = ""
 
     def o(self, data: str, puredata: bool = False, force: bool | str = False) -> None:
         """
@@ -722,7 +714,6 @@ class HTML2DisMd(html.parser.HTMLParser):
                 # (see entityref)
                 data = re.sub(r"\s+", r" ", data)
                 if data and data[0] == " ":
-                    self.space = True
                     data = data[1:]
             if not data and not force:
                 return
@@ -754,7 +745,6 @@ class HTML2DisMd(html.parser.HTMLParser):
                     data = data.lstrip("\n")
 
             if self.start:
-                self.space = False
                 self.p_p = 0
                 self.start = False
 
@@ -762,17 +752,10 @@ class HTML2DisMd(html.parser.HTMLParser):
                 # It's the end.
                 self.p_p = 0
                 self.out("\n")
-                self.space = False
 
             if self.p_p:
                 self.out((self.br_toggle + "\n" + bq) * self.p_p)
-                self.space = False
                 self.br_toggle = ""
-
-            if self.space:
-                if not self.lastWasNL:
-                    self.out(" ")
-                self.space = False
 
             if self.a and ((self.p_p == 2 and self.links_each_paragraph) or force == "end"):
                 if force == "end":
@@ -916,10 +899,7 @@ class HTML2DisMd(html.parser.HTMLParser):
                         subsequent_indent=indent,
                     )
                     result += "\n".join(wrapped)
-                    if para.endswith("  "):
-                        result += "  \n"
-                        newlines = 1
-                    elif indent:
+                    if para.endswith("  ") or indent:
                         result += "\n"
                         newlines = 1
                     else:
