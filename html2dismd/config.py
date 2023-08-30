@@ -24,7 +24,7 @@ INLINE_LINKS = True
 
 # Protect links from line breaks surrounding them with angle brackets (in
 # addition to their square brackets)
-PROTECT_LINKS = False
+PROTECT_LINKS = True
 # WRAP_LINKS = True
 WRAP_LINKS = True
 
