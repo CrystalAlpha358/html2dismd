@@ -1,5 +1,5 @@
 class AnchorElement:
-    __slots__ = ["attrs", "count", "outcount"]
+    __slots__ = ("attrs", "count", "outcount")
 
     def __init__(self, attrs: dict[str, str | None], count: int, outcount: int):
         self.attrs = attrs
@@ -8,7 +8,7 @@ class AnchorElement:
 
 
 class ListElement:
-    __slots__ = ["name", "num"]
+    __slots__ = ("name", "num")
 
     def __init__(self, name: str, num: int):
         self.name = name

@@ -293,7 +293,7 @@ class HTML2DisMd(html.parser.HTMLParser):
         if (
             start
             and self.maybe_automatic_link is not None
-            and tag not in ["p", "div", "style", "dl", "dt"]
+            and tag not in ("p", "div", "style", "dl", "dt")
             and (tag != "img" or self.ignore_images)
         ):
             self.o("[")
@@ -338,7 +338,7 @@ class HTML2DisMd(html.parser.HTMLParser):
                     self.inheader = False
                     return  # prevent redundant emphasis marks on headers
 
-        if tag in ["p", "div"]:
+        if tag in ("p", "div"):
             if self.google_doc:
                 if start and google_has_height(tag_style):
                     self.p()
@@ -362,7 +362,7 @@ class HTML2DisMd(html.parser.HTMLParser):
             self.o("* * *")
             self.p()
 
-        if tag in ["head", "style", "script"]:
+        if tag in ("head", "style", "script"):
             if start:
                 self.quiet += 1
             else:
@@ -374,7 +374,7 @@ class HTML2DisMd(html.parser.HTMLParser):
             else:
                 self.style -= 1
 
-        if tag in ["body"]:
+        if tag in ("body"):
             self.quiet = 0  # sites like 9rules.com never close <head>
 
         if tag == "blockquote":
@@ -387,7 +387,7 @@ class HTML2DisMd(html.parser.HTMLParser):
                 self.blockquote -= 1
                 self.p()
 
-        if tag in ["u"] and not self.ignore_emphasis:
+        if tag in ("u",) and not self.ignore_emphasis:
             if start and self.preceding_data and self.preceding_data[-1] in self.whitespace_after:
                 emphasis = " " + self.underline_mark
                 self.preceding_data += " "
@@ -398,7 +398,7 @@ class HTML2DisMd(html.parser.HTMLParser):
             if start:
                 self.stressed = True
 
-        if tag in ["em", "i"] and not self.ignore_emphasis:
+        if tag in ("em", "i") and not self.ignore_emphasis:
             # Separate with a space if we immediately follow an alphanumeric
             # character, since otherwise Markdown won't render the emphasis
             # marks, and we'll be left with eg 'foo_bar_' visible.
@@ -414,7 +414,7 @@ class HTML2DisMd(html.parser.HTMLParser):
             if start:
                 self.stressed = True
 
-        if tag in ["strong", "b"] and not self.ignore_emphasis:
+        if tag in ("strong", "b") and not self.ignore_emphasis:
             # Separate with space if we immediately follow an * character, since
             # without it, Markdown won't render the resulting *** correctly.
             # (Don't add a space otherwise, though, since there isn't one in the
@@ -429,7 +429,7 @@ class HTML2DisMd(html.parser.HTMLParser):
             if start:
                 self.stressed = True
 
-        if tag in ["del", "strike", "s"]:
+        if tag in ("del", "strike", "s"):
             if start and self.preceding_data and self.preceding_data[-1] == "~":
                 strike = " ~~"
                 self.preceding_data += " "
@@ -445,7 +445,7 @@ class HTML2DisMd(html.parser.HTMLParser):
                 # handle some font attributes, but leave headers clean
                 self.handle_emphasis(start, tag_style, parent_style)
 
-        if tag in ["kbd", "code", "tt"] and not self.pre:
+        if tag in ("kbd", "code", "tt") and not self.pre:
             self.o("`")  # TODO: `` `this` ``
             self.code = not self.code
 
@@ -577,7 +577,7 @@ class HTML2DisMd(html.parser.HTMLParser):
         if tag == "dd" and not start:
             self.pbr()
 
-        if tag in ["ol", "ul"]:
+        if tag in ("ol", "ul"):
             # Google Docs create sub lists as top level lists
             if not self.list and not self.lastWasList:
                 self.p()
@@ -623,7 +623,7 @@ class HTML2DisMd(html.parser.HTMLParser):
                     self.o(str(li.num) + ". ")
                 self.start = True
 
-        if tag in ["table", "tr", "td", "th"]:
+        if tag in ("table", "tr", "td", "th"):
             if self.ignore_tables:
                 if tag == "tr":
                     if start:
@@ -636,7 +636,7 @@ class HTML2DisMd(html.parser.HTMLParser):
             elif self.bypass_tables:
                 if start:
                     self.soft_br()
-                if tag in ["td", "th"]:
+                if tag in ("td", "th"):
                     if start:
                         self.o("<{}>\n\n".format(tag))
                     else:
@@ -660,7 +660,7 @@ class HTML2DisMd(html.parser.HTMLParser):
                             self.soft_br()
                             self.o("</" + config.TABLE_MARKER_FOR_PAD + ">")
                             self.o("\n")
-                if tag in ["td", "th"] and start:
+                if tag in ("td", "th") and start:
                     if self.split_next_td:
                         self.o("| ")
                     self.split_next_td = True
@@ -675,7 +675,7 @@ class HTML2DisMd(html.parser.HTMLParser):
                     self.o("|".join(["---"] * self.td_count))
                     self.soft_br()
                     self.table_start = False
-                if tag in ["td", "th"] and start:
+                if tag in ("td", "th") and start:
                     self.td_count += 1
 
         if tag == "pre":
@@ -812,7 +812,7 @@ class HTML2DisMd(html.parser.HTMLParser):
             if (
                 re.match(r"[^][(){}\s.!?]", data[0])
                 and not hn(self.current_tag)
-                and self.current_tag not in ["a", "code", "pre"]
+                and self.current_tag not in ("a", "code", "pre")
             ):
                 # should match a letter or common punctuation
                 data = " " + data
@@ -838,7 +838,7 @@ class HTML2DisMd(html.parser.HTMLParser):
         self.o(data, puredata=True)
 
     def charref(self, name: str) -> str:
-        if name[0] in ["x", "X"]:
+        if name[0] in ("x", "X"):
             c = int(name[1:], 16)
         else:
             c = int(name)
