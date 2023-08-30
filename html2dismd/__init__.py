@@ -80,6 +80,7 @@ class HTML2DisMd(html.parser.HTMLParser):
         self.use_automatic_links = config.USE_AUTOMATIC_LINKS
         self.hide_strikethrough = False
         self.mark_code = config.MARK_CODE
+        self.mark_block_code = True
         self.wrap_list_items = config.WRAP_LIST_ITEMS
         self.wrap_links = config.WRAP_LINKS
         self.wrap_tables = config.WRAP_TABLES
@@ -697,6 +698,10 @@ class HTML2DisMd(html.parser.HTMLParser):
                 self.pre = False
                 if self.mark_code:
                     self.out("\n[/code]")
+                elif self.mark_block_code:
+                    self.out("\n```")
+                    self.soft_br()
+                    return
             self.p()
 
     # TODO: Add docstring for these one letter functions
@@ -749,12 +754,15 @@ class HTML2DisMd(html.parser.HTMLParser):
                 if self.mark_code:
                     self.out("\n[code]")
                     self.p_p = 0
+                elif self.mark_block_code:
+                    self.out("\n```")
+                    self.p_p = 0
 
             bq = ">" * self.blockquote
             if not (force and data and data[0] == ">") and self.blockquote:
                 bq += " "
 
-            if self.pre:
+            if self.pre and not self.mark_block_code:
                 if not self.list:
                     bq += "    "
                 # else: list content is already partially indented
