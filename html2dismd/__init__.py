@@ -567,7 +567,8 @@ class HTML2DisMd(html.parser.HTMLParser):
 
                     if self.inline_links:
                         href = attrs.get("href") or ""
-                        self.o("(" + escape_md(urlparse.urljoin(self.baseurl, href)) + ")")
+                        href_md = escape_md(urlparse.urljoin(self.baseurl, href))
+                        self.o(f"(<{href_md}>)" if self.protect_links else f"({href_md})")
                     else:
                         i = self.previousIndex(attrs)
                         if i is not None:
