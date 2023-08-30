@@ -67,7 +67,6 @@ class HTML2DisMd(html.parser.HTMLParser):
         self.images_to_alt = config.IMAGES_TO_ALT
         self.images_to_anchor = True
         self.images_with_size = config.IMAGES_WITH_SIZE
-        self.images_link_alt = "Inline Image"
         self.ignore_emphasis = config.IGNORE_EMPHASIS
         self.bypass_tables = config.BYPASS_TABLES
         self.ignore_tables = config.IGNORE_TABLES
@@ -564,11 +563,7 @@ class HTML2DisMd(html.parser.HTMLParser):
                 if self.images_to_alt or self.ignore_image_url_re and self.ignore_image_url_re.match(url):
                     self.o(escape_md(alt))
                 else:
-                    if self.images_to_anchor:
-                        desc = "%s%s" % (self.images_link_alt, f": {alt}" if alt else "")
-                        self.o(f"[{escape_md(desc)}]")
-                    else:
-                        self.o("![" + escape_md(alt) + "]")
+                    self.o(f"{'' if self.images_to_anchor else '!'}[{escape_md(alt)}]")
 
                     if self.inline_links:
                         url_md = escape_md(url)
