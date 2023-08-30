@@ -68,6 +68,7 @@ class HTML2DisMd(html.parser.HTMLParser):
         self.google_doc = True
         self.ul_item_mark = "*"
         self.emphasis_mark = "_"
+        self.underline_mark = "__"
         self.strong_mark = "**"
         self.whitespace_after = "_*"
         self.single_line_break = config.SINGLE_LINE_BREAK
@@ -386,7 +387,18 @@ class HTML2DisMd(html.parser.HTMLParser):
                 self.blockquote -= 1
                 self.p()
 
-        if tag in ["em", "i", "u"] and not self.ignore_emphasis:
+        if tag in ["u"] and not self.ignore_emphasis:
+            if start and self.preceding_data and self.preceding_data[-1] in self.whitespace_after:
+                emphasis = " " + self.underline_mark
+                self.preceding_data += " "
+            else:
+                emphasis = self.underline_mark
+
+            self.o(emphasis)
+            if start:
+                self.stressed = True
+
+        if tag in ["em", "i"] and not self.ignore_emphasis:
             # Separate with a space if we immediately follow an alphanumeric
             # character, since otherwise Markdown won't render the emphasis
             # marks, and we'll be left with eg 'foo_bar_' visible.
