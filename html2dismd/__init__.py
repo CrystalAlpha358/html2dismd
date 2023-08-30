@@ -62,6 +62,7 @@ class HTML2DisMd(html.parser.HTMLParser):
         self.ignore_links = config.IGNORE_ANCHORS
         self.ignore_mailto_links = config.IGNORE_MAILTO_LINKS
         self.ignore_images = config.IGNORE_IMAGES
+        self.ignore_image_url_re: re.Pattern[str] | None = None
         self.images_as_html = config.IMAGES_AS_HTML
         self.images_to_alt = config.IMAGES_TO_ALT
         self.images_to_anchor = True
@@ -555,9 +556,12 @@ class HTML2DisMd(html.parser.HTMLParser):
                         self.maybe_automatic_link = None
                         self.empty_link = False
 
+                href = attrs.get("href") or ""
+                url = urlparse.urljoin(self.baseurl, href)
+
                 # If we have images_to_alt, we discard the image itself,
                 # considering only the alt text.
-                if self.images_to_alt:
+                if self.images_to_alt or self.ignore_image_url_re and self.ignore_image_url_re.match(url):
                     self.o(escape_md(alt))
                 else:
                     if self.images_to_anchor:
@@ -567,9 +571,8 @@ class HTML2DisMd(html.parser.HTMLParser):
                         self.o("![" + escape_md(alt) + "]")
 
                     if self.inline_links:
-                        href = attrs.get("href") or ""
-                        href_md = escape_md(urlparse.urljoin(self.baseurl, href))
-                        self.o(f"(<{href_md}>)" if self.protect_links else f"({href_md})")
+                        url_md = escape_md(url)
+                        self.o(f"(<{url_md}>)" if self.protect_links else f"({url_md})")
                     else:
                         i = self.previousIndex(attrs)
                         if i is not None:
