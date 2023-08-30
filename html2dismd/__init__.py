@@ -62,7 +62,7 @@ class HTML2DisMd(html.parser.HTMLParser):
         self.ignore_links = config.IGNORE_ANCHORS
         self.ignore_mailto_links = config.IGNORE_MAILTO_LINKS
         self.ignore_images = config.IGNORE_IMAGES
-        self.ignore_image_url_re: re.Pattern[str] | None = None
+        self.force_images_to_alt_url: re.Pattern[str] | None = None
         self.images_as_html = config.IMAGES_AS_HTML
         self.images_to_alt = config.IMAGES_TO_ALT
         self.images_to_anchor = True
@@ -560,7 +560,7 @@ class HTML2DisMd(html.parser.HTMLParser):
 
                 # If we have images_to_alt, we discard the image itself,
                 # considering only the alt text.
-                if self.images_to_alt or self.ignore_image_url_re and self.ignore_image_url_re.match(url):
+                if self.images_to_alt or self.force_images_to_alt_url and self.force_images_to_alt_url.match(url):
                     self.o(escape_md(alt))
                 else:
                     self.o(f"{'' if self.images_to_anchor else '!'}[{escape_md(alt)}]")
