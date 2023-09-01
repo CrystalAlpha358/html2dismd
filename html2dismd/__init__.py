@@ -292,7 +292,7 @@ class HTML2DisMd(html.parser.HTMLParser):
         tag_style, parent_style = dict[str, str](), dict[str, str]()
 
         if self.tag_callback is not None:
-            if self.tag_callback(self, tag, attrs, start) is True:
+            if self.tag_callback(self, tag, attrs, start):
                 return
 
         # first thing inside the anchor tag is another tag
