@@ -4,6 +4,7 @@ import html.entities
 import html.parser
 import re
 import urllib.parse as urlparse
+from collections.abc import Callable
 from textwrap import wrap
 from typing import Final
 
@@ -86,7 +87,7 @@ class HTML2DisMd(html.parser.HTMLParser):
         self.wrap_tables = config.WRAP_TABLES
         self.pad_tables = config.PAD_TABLES
         self.default_image_alt = config.DEFAULT_IMAGE_ALT
-        self.tag_callback = None
+        self.tag_callback: Callable[[HTML2DisMd, str, dict[str, str | None], bool], bool] | None = None
         self.open_quote = config.OPEN_QUOTE
         self.close_quote = config.CLOSE_QUOTE
 
