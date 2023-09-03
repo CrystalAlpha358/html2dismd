@@ -27,7 +27,7 @@ from .utils import (
     unifiable_n,
 )
 
-_STRIP_STR: Final = " \t\r\n"
+_STRIP_STR: Final = "\t\n\f\r "
 
 # TODO:
 # Support decoded entities with UNIFIABLE.
@@ -738,7 +738,7 @@ class HTML2DisMd(html.parser.HTMLParser):
                 # This is a very dangerous call ... it could mess up
                 # all handling of &nbsp; when not handled properly
                 # (see entityref)
-                data = re.sub(r"\s+", r" ", data)
+                data = re.sub(f"[{_STRIP_STR}]+", " ", data)
                 if data and data[0] == " ":
                     data = data[1:]
             if not data and not force:
@@ -827,7 +827,7 @@ class HTML2DisMd(html.parser.HTMLParser):
             self.preceding_stressed = True
         elif self.preceding_stressed:
             if (
-                re.match(r"[^][(){}\s.!?]", data[0])
+                re.match(f"[^][(){{}}{_STRIP_STR}.!?]", data[0])
                 and not hn(self.current_tag)
                 and self.current_tag not in ("a", "code", "pre")
             ):
