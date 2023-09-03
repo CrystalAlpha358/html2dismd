@@ -400,6 +400,7 @@ class HTML2DisMd(html.parser.HTMLParser):
                 self.preceding_data += " "
             else:
                 emphasis = self.underline_mark
+                self.preceding_data += self.underline_mark
 
             self.o(emphasis)
             if start:
@@ -416,6 +417,7 @@ class HTML2DisMd(html.parser.HTMLParser):
                 self.preceding_data += " "
             else:
                 emphasis = self.emphasis_mark
+                self.preceding_data += self.emphasis_mark
 
             self.o(emphasis)
             if start:
@@ -431,6 +433,7 @@ class HTML2DisMd(html.parser.HTMLParser):
                 self.preceding_data += " "
             else:
                 strong = self.strong_mark
+                self.preceding_data += self.strong_mark
 
             self.o(strong)
             if start:
