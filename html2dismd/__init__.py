@@ -366,7 +366,7 @@ class HTML2DisMd(html.parser.HTMLParser):
 
         if tag == "hr" and start:
             self.p()
-            self.o("* * *")
+            self.o(r"\- \- \-")
             self.p()
 
         if tag in ("head", "style", "script"):
